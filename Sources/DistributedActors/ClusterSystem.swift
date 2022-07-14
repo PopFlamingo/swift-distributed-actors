@@ -151,7 +151,9 @@ public class ClusterSystem: DistributedActorSystem, @unchecked Sendable {
     private let _clusterControlStore: ManagedAtomicLazyReference<Box<ClusterControl>>
     public var cluster: ClusterControl {
         guard let box = _clusterControlStore.load() else {
+            print("Attempting to acquire initLock lock")
             self.initLock.lock()
+            print("Acquired initLock lock")
             defer { initLock.unlock() }
 
             return self.cluster // recurse, as we hold the lock now, it MUST be initialized already
